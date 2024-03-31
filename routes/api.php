@@ -38,8 +38,6 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::post('/transfers', [TransferController::class, 'index']);
-//    Route::get('/transfers/{id}', [TransferController::class, 'index']);
-//    Route::put('/transfers/{id}/sign', [TransferController::class, 'store']);
 });
 
 Route::middleware('auth')->get('/dashboard', function () {

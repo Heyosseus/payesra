@@ -131,12 +131,7 @@ const remove = (productId) => {
 
 const buy = () => {
     axiosInstance.post('/api/transfers', transferData)
-        .then(response => {
-            console.log(response.data);
-        })
         .catch(error => {
-            console.log(transferData)
-
             console.error(error);
         });
 };

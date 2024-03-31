@@ -15,7 +15,6 @@ import Product from "./components/products/Product.vue";
 import axiosInstance from "./config/axios.js";
 import router from "./router/index.js";
 const logout = async () => {
-    console.log(localStorage.getItem('token'));
     try {
         const response = await axiosInstance.get("/api/logout");
         localStorage.removeItem('token');
