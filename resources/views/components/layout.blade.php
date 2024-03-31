@@ -13,6 +13,6 @@
         @vite('resources/css/app.css')
     </head>
     <body class="antialiased">
-        <h1 class="text-2xl text-red-600">hello</h1>
+    {{ $slot }}
     </body>
 </html>
