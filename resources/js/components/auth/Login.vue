@@ -18,7 +18,10 @@
                             <input v-model="formData.password" type="password" id="password" placeholder="Choose a Password" class="bg-gray-100 border-2 w-full p-4 rounded-lg focus:outline-none focus:bg-white focus:border-blue-500">
                         </div>
 
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-10 text-lg rounded-3xl focus:outline-none focus:shadow-outline">Submit</button>
+                        <div class="flex justify-between items-center">
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-10 text-lg rounded-3xl focus:outline-none focus:shadow-outline">Submit</button>
+                            <a href="/register" class="text-xl underline font-bold text-white">Register</a>
+                        </div>
                     </form>
                 </div>
             </div>

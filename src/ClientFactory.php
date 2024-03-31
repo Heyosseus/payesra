@@ -9,7 +9,7 @@ class ClientFactory extends ClientFactoryAbstract
 {
     const DEFAULT_BASE_URL = 'https://wallet.paysera.com/transfer/rest/v1/';
 
-    private $apiClient;
+    private ApiClient $apiClient;
 
     public function __construct($options)
     {
