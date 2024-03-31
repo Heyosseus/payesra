@@ -1,9 +1,17 @@
-<x-layout>
-    <div class="flex items-center justify-between bg-gray-200 p-8">
-        <a href="/" class="text-4xl" >Paysera</a>
-        <div class="  ">
-            <a href="/profile" class="py-4 px-6 text-lg text-blue-900 rounded-3xl  hover:underline outline-0">Profile</a>
-            <a href="/logout" class="py-4 px-6 text-lg text-red-600  font-bold hover:underline    outline-0">Log out</a>
-        </div>
-    </div>
-</x-layout>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Paysera</title>
+    @vite('resources/js/app.js')
+    @vite('resources/css/app.css')
+</head>
+<body>
+<div id="app">
+    <dashboard-view></dashboard-view>
+</div>
+</body>
+</html>
