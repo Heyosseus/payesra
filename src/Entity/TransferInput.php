@@ -1,179 +1,293 @@
 <?php
 
-namespace Paysera\Client\TransfersClient;
+namespace Paysera\Client\TransfersClient\Entity;
 
-use Paysera\Client\TransfersClient\Entity as Entities;
-use Fig\Http\Message\RequestMethodInterface;
-use Paysera\Component\RestClientCommon\Client\ApiClient;
+use Paysera\Component\RestClientCommon\Entity\Entity;
 
-class TransfersClient
+class TransferInput extends Entity
 {
-    private $apiClient;
+    const CHARGE_TYPE_SHA = 'SHA';
+    const CHARGE_TYPE_OUR = 'OUR';
+    const URGENCY_STANDARD = 'standard';
+    const URGENCY_URGENT = 'urgent';
 
-    public function __construct(ApiClient $apiClient)
+    public function __construct(array $data = [])
     {
-        $this->apiClient = $apiClient;
-    }
-
-    public function withOptions(array $options)
-    {
-        return new TransfersClient($this->apiClient->withOptions($options));
-    }
-
-    /**
-     * It reserves funds for transfer and makes it "reserved". It's enough for transfer to be processed. If there are not enough funds, any limits are reached etc., transfer will be still "new" and no action will take place. Returns error if no funds available.
-     * PUT /transfers/{id}/reserve
-     *
-     * @param string $id
-     * @param Entities\TransferRegistrationParameters $transferRegistrationParameters
-     * @return Entities\TransferOutput
-     */
-    public function reserveTransfer($id, Entities\TransferRegistrationParameters $transferRegistrationParameters)
-    {
-        $request = $this->apiClient->createRequest(
-            RequestMethodInterface::METHOD_PUT,
-            sprintf('transfers/%s/reserve', urlencode($id)),
-            $transferRegistrationParameters
-        );
-        $data = $this->apiClient->makeRequest($request);
-
-        return new Entities\TransferOutput($data);
+        parent::__construct($data);
     }
 
     /**
-     * Provide password for transfer with status `waiting_password`. If operation is successful, transfer status becomes `done`. Available only for internal transfers. Returns error if password provided is invalid.
-     * PUT /transfers/{id}/provide-password
-     *
-     * @param string $id
-     * @param Entities\TransferPassword $transferPassword
-     * @return Entities\TransferOutput
+     * @return Money
      */
-    public function provideTransferPassword($id, Entities\TransferPassword $transferPassword)
+    public function getAmount()
     {
-        $request = $this->apiClient->createRequest(
-            RequestMethodInterface::METHOD_PUT,
-            sprintf('transfers/%s/provide-password', urlencode($id)),
-            $transferPassword
-        );
-        $data = $this->apiClient->makeRequest($request);
-
-        return new Entities\TransferOutput($data);
+        return (new Money())->setDataByReference($this->getByReference('amount'));
     }
-
     /**
-     * Make transfer visible in frontend for signing. If currency convert operations are related to transfer, they are done when transfer becomes `reserved`. If there are expectations in currency convert requests, transfer becomes `failed` together with related conversion request(s) if those expectations fails. This only makes transfer "reserved", so it's visible in our Web UI for signing
-     * PUT /transfers/{id}/register
-     *
-     * @param string $id
-     * @param Entities\TransferRegistrationParameters $transferRegistrationParameters
-     * @return Entities\TransferOutput
+     * @param Money $amount
+     * @return $this
      */
-    public function registerTransfer($id, Entities\TransferRegistrationParameters $transferRegistrationParameters)
+    public function setAmount(Money $amount)
     {
-        $request = $this->apiClient->createRequest(
-            RequestMethodInterface::METHOD_PUT,
-            sprintf('transfers/%s/register', urlencode($id)),
-            $transferRegistrationParameters
-        );
-        $data = $this->apiClient->makeRequest($request);
-
-        return new Entities\TransferOutput($data);
+        $this->setByReference('amount', $amount->getDataByReference());
+        return $this;
     }
-
     /**
-     * Signs the transfer
-     * PUT /transfers/{id}/sign
-     *
-     * @param string $id
-     * @param Entities\TransferRegistrationParameters $transferRegistrationParameters
-     * @return Entities\TransferOutput
+     * @return TransferBeneficiary
      */
-    public function signTransfer($id, Entities\TransferRegistrationParameters $transferRegistrationParameters)
+    public function getBeneficiary()
     {
-        $request = $this->apiClient->createRequest(
-            RequestMethodInterface::METHOD_PUT,
-            sprintf('transfers/%s/sign', urlencode($id)),
-            $transferRegistrationParameters
-        );
-        $data = $this->apiClient->makeRequest($request);
-
-        return new Entities\TransferOutput($data);
+        return (new TransferBeneficiary())->setDataByReference($this->getByReference('beneficiary'));
     }
-
     /**
-     * Get transfer.
-     * GET /transfers/{id}
-     *
-     * @param string $id
-     * @return Entities\TransferOutput
+     * @param TransferBeneficiary $beneficiary
+     * @return $this
      */
-    public function getTransfer($id)
+    public function setBeneficiary(TransferBeneficiary $beneficiary)
     {
-        $request = $this->apiClient->createRequest(
-            RequestMethodInterface::METHOD_GET,
-            sprintf('transfers/%s', urlencode($id)),
-            null
-        );
-        $data = $this->apiClient->makeRequest($request);
-
-        return new Entities\TransferOutput($data);
+        $this->setByReference('beneficiary', $beneficiary->getDataByReference());
+        return $this;
     }
-
     /**
-     * Revoke transfer.
-     * DELETE /transfers/{id}
-     *
-     * @param string $id
-     * @return Entities\TransferOutput
+     * @return Payer
      */
-    public function deleteTransfer($id)
+    public function getPayer()
     {
-        $request = $this->apiClient->createRequest(
-            RequestMethodInterface::METHOD_DELETE,
-            sprintf('transfers/%s', urlencode($id)),
-            null
-        );
-        $data = $this->apiClient->makeRequest($request);
-
-        return new Entities\TransferOutput($data);
+        return (new Payer())->setDataByReference($this->getByReference('payer'));
     }
-
     /**
-     * Create transfer in the system. Created transfer is invisible and will be deleted if no more actions are performed.
-
-     * POST /transfers
-     *
-     * @param Entities\TransferInput $transferInput
-     * @return Entities\TransferOutput
+     * @param Payer $payer
+     * @return $this
      */
-    public function createTransfer(Entities\TransferInput $transferInput)
+    public function setPayer(Payer $payer)
     {
-        $request = $this->apiClient->createRequest(
-            RequestMethodInterface::METHOD_POST,
-            'transfers',
-            $transferInput
-        );
-        $data = $this->apiClient->makeRequest($request);
-
-        return new Entities\TransferOutput($data);
+        $this->setByReference('payer', $payer->getDataByReference());
+        return $this;
     }
-
     /**
-     * Standard SQL-style Result filtering
-     * GET /transfers
-     *
-     * @param Entities\TransfersFilter $transfersFilter
-     * @return Entities\FilteredTransfersResult
+     * @return FinalBeneficiary|null
      */
-    public function getTransfers(Entities\TransfersFilter $transfersFilter)
+    public function getFinalBeneficiary()
     {
-        $request = $this->apiClient->createRequest(
-            RequestMethodInterface::METHOD_GET,
-            'transfers',
-            $transfersFilter
-        );
-        $data = $this->apiClient->makeRequest($request);
-
-        return new Entities\FilteredTransfersResult($data, 'transfers');
+        if ($this->get('final_beneficiary') === null) {
+            return null;
+        }
+        return (new FinalBeneficiary())->setDataByReference($this->getByReference('final_beneficiary'));
+    }
+    /**
+     * @param FinalBeneficiary $finalBeneficiary
+     * @return $this
+     */
+    public function setFinalBeneficiary(FinalBeneficiary $finalBeneficiary)
+    {
+        $this->setByReference('final_beneficiary', $finalBeneficiary->getDataByReference());
+        return $this;
+    }
+    /**
+     * @return \DateTimeImmutable|null
+     */
+    public function getPerformAt()
+    {
+        if ($this->get('perform_at') === null) {
+            return null;
+        }
+        return (new \DateTimeImmutable())->setTimestamp($this->get('perform_at'));
+    }
+    /**
+     * @param \DateTimeInterface $performAt
+     * @return $this
+     */
+    public function setPerformAt(\DateTimeInterface $performAt)
+    {
+        $this->set('perform_at', $performAt->getTimestamp());
+        return $this;
+    }
+    /**
+     * @return string|null
+     */
+    public function getChargeType()
+    {
+        return $this->get('charge_type');
+    }
+    /**
+     * @param string $chargeType
+     * @return $this
+     */
+    public function setChargeType($chargeType)
+    {
+        $this->set('charge_type', $chargeType);
+        return $this;
+    }
+    /**
+     * @return string|null
+     */
+    public function getUrgency()
+    {
+        return $this->get('urgency');
+    }
+    /**
+     * @param string $urgency
+     * @return $this
+     */
+    public function setUrgency($urgency)
+    {
+        $this->set('urgency', $urgency);
+        return $this;
+    }
+    /**
+     * @return TransferNotifications|null
+     */
+    public function getNotifications()
+    {
+        if ($this->get('notifications') === null) {
+            return null;
+        }
+        return (new TransferNotifications())->setDataByReference($this->getByReference('notifications'));
+    }
+    /**
+     * @param TransferNotifications $notifications
+     * @return $this
+     */
+    public function setNotifications(TransferNotifications $notifications)
+    {
+        $this->setByReference('notifications', $notifications->getDataByReference());
+        return $this;
+    }
+    /**
+     * @return TransferPurpose
+     */
+    public function getPurpose()
+    {
+        return (new TransferPurpose())->setDataByReference($this->getByReference('purpose'));
+    }
+    /**
+     * @param TransferPurpose $purpose
+     * @return $this
+     */
+    public function setPurpose(TransferPurpose $purpose)
+    {
+        $this->setByReference('purpose', $purpose->getDataByReference());
+        return $this;
+    }
+    /**
+     * @return TransferPassword|null
+     */
+    public function getPassword()
+    {
+        if ($this->get('password') === null) {
+            return null;
+        }
+        return (new TransferPassword())->setDataByReference($this->getByReference('password'));
+    }
+    /**
+     * @param TransferPassword $password
+     * @return $this
+     */
+    public function setPassword(TransferPassword $password)
+    {
+        $this->setByReference('password', $password->getDataByReference());
+        return $this;
+    }
+    /**
+     * @return boolean|null
+     */
+    public function isCancelable()
+    {
+        return $this->get('cancelable');
+    }
+    /**
+     * @param boolean $cancelable
+     * @return $this
+     */
+    public function setCancelable($cancelable)
+    {
+        $this->set('cancelable', $cancelable);
+        return $this;
+    }
+    /**
+     * @return boolean|null
+     */
+    public function isAutoCurrencyConvert()
+    {
+        return $this->get('auto_currency_convert');
+    }
+    /**
+     * @param boolean $autoCurrencyConvert
+     * @return $this
+     */
+    public function setAutoCurrencyConvert($autoCurrencyConvert)
+    {
+        $this->set('auto_currency_convert', $autoCurrencyConvert);
+        return $this;
+    }
+    /**
+     * @return boolean|null
+     */
+    public function isAutoChargeRelatedCard()
+    {
+        return $this->get('auto_charge_related_card');
+    }
+    /**
+     * @param boolean $autoChargeRelatedCard
+     * @return $this
+     */
+    public function setAutoChargeRelatedCard($autoChargeRelatedCard)
+    {
+        $this->set('auto_charge_related_card', $autoChargeRelatedCard);
+        return $this;
+    }
+    /**
+     * @return boolean|null
+     */
+    public function isAutoProcessToDone()
+    {
+        return $this->get('auto_process_to_done');
+    }
+    /**
+     * @param boolean $autoProcessToDone
+     * @return $this
+     */
+    public function setAutoProcessToDone($autoProcessToDone)
+    {
+        $this->set('auto_process_to_done', $autoProcessToDone);
+        return $this;
+    }
+    /**
+     * @return \DateTimeImmutable|null
+     */
+    public function getReserveUntil()
+    {
+        if ($this->get('reserve_until') === null) {
+            return null;
+        }
+        return (new \DateTimeImmutable())->setTimestamp($this->get('reserve_until'));
+    }
+    /**
+     * @param \DateTimeInterface $reserveUntil
+     * @return $this
+     */
+    public function setReserveUntil(\DateTimeInterface $reserveUntil)
+    {
+        $this->set('reserve_until', $reserveUntil->getTimestamp());
+        return $this;
+    }
+    /**
+     * @return TransferCallback|null
+     */
+    public function getCallback()
+    {
+        if ($this->get('callback') === null) {
+            return null;
+        }
+        return (new TransferCallback())->setDataByReference($this->getByReference('callback'));
+    }
+    /**
+     * @param TransferCallback $callback
+     * @return $this
+     */
+    public function setCallback(TransferCallback $callback)
+    {
+        $this->setByReference('callback', $callback->getDataByReference());
+        return $this;
     }
 }

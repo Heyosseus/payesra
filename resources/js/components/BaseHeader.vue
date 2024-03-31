@@ -2,7 +2,7 @@
     <div class="flex items-center justify-between bg-gray-200 p-8">
         <h1 class="text-4xl">Paysera</h1>
         <div class="space-x-4">
-            <router-link to="/login"
+            <router-link to="/dashboard"
                          class="py-4 px-6 bg-white text-blue-900 border-blue-900 border rounded-3xl hover:bg-blue-900 hover:text-white transition-colors outline-0">
                 Log in
             </router-link>

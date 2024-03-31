@@ -1,8 +1,8 @@
 <?php
 
-namespace App\src;
+namespace Paysera\Client\TransfersClient;
 
-use App\src\Entity as Entities;
+use Paysera\Client\TransfersClient\Entity as Entities;
 use Fig\Http\Message\RequestMethodInterface;
 use Paysera\Component\RestClientCommon\Client\ApiClient;
 

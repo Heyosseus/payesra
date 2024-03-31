@@ -12,19 +12,14 @@
 <script setup>
 import {ref} from "vue";
 import Product from "./components/products/Product.vue";
-import axios from "axios";
+import axiosInstance from "./config/axios.js";
 import router from "./router/index.js";
 const logout = async () => {
     console.log(localStorage.getItem('token'));
     try {
-        const response = await axios.get("/api/logout", {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        });
-        console.log('Logout successful');
-        localStorage.removeItem('token'); // Remove the token from localStorage
-        await router.push("/"); // Redirect to the home page or login page
+        const response = await axiosInstance.get("/api/logout");
+        localStorage.removeItem('token');
+        await router.push("/");
     } catch (error) {
         console.log('Logout error:', error.response.data);
     }

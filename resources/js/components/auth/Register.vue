@@ -40,7 +40,6 @@ const formData = ref({
 const submitForm = async () => {
     try {
         const response = await axios.post("/api/register", formData.value);
-        console.log(response.data);
         await router.push("/login");
     } catch (error) {
         console.log(error.response.data);

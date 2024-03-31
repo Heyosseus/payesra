@@ -3,33 +3,37 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-
 use Paysera\Client\TransfersClient\ClientFactory;
+use Paysera\Client\TransfersClient\Entity\Money;
+use Paysera\Client\TransfersClient\Entity as Entities;
 
 class TransferController extends Controller
 {
+
+    protected $clientFactory;
+
+    public function __construct(ClientFactory $clientFactory)
+    {
+        $this->clientFactory = $clientFactory;
+    }
+
     public function index(Request $request)
     {
-        $details = $request->all();
+        $transferInput = new Entities\TransferInput();
+        $amountData = [
+            'amount' => $request->input('amount.amount'),
+            'currency' => $request->input('amount.currency')
+        ];
+        $amount = new Money($amountData);
 
-        $clientFactory = new ClientFactory([
-            'base_url' => 'https://wallet.paysera.com/transfer/rest/v1/', // optional, in case you need a custom one.
-            'basic' => [                                        // use this, it API requires Basic authentication.
-                'username' => 'username',
-                'password' => 'password',
-            ],
-            'oauth' => [                                        // use this, it API requires OAuth v2 authentication.
-                'token' => [
-                    'access_token' => 'my-access-token',
-                    'refresh_token' => 'my-refresh-token',
-                ],
-            ],
-            // other configuration options, if needed
-        ]);
 
-        $transfersClient = $clientFactory->getTransfersClient();
+        $transferInput
+            ->setAmount($amount);
 
+        $transfersClient = $this->clientFactory->getTransfersClient();
+        $result = $transfersClient->createTransfer($transferInput);
+
+        return response()->json($result);
     }
 
 }

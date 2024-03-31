@@ -1,6 +1,6 @@
 <?php
 
-namespace App\src\Entity;
+namespace Paysera\Client\TransfersClient\Entity;
 
 use Paysera\Component\RestClientCommon\Entity\Result;
 
