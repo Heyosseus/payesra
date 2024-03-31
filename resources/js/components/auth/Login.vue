@@ -41,10 +41,12 @@ const formData = ref({
 const submitForm = async () => {
     try {
         const response = await axios.post("/api/login", formData.value);
-        console.log(response.data);
+        const { token } = response.data; // Assuming the token is returned in the response
+        localStorage.setItem('token', token); // Store the token in localStorage
+        console.log('Login successful');
         await router.push("/dashboard");
     } catch (error) {
-        console.log(error.response.data);
+        console.log('Login error:', error.response.data);
     }
 };
 </script>

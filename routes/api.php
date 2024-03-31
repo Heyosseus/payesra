@@ -21,12 +21,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::controller(AuthController::class)->group(function () {
     Route::post('/register', 'register')->name('register');
     Route::post('/login', 'login')->name('login.store');
-    Route::get('/logout', 'logout')->middleware('auth');
+    Route::middleware('auth:api')->group(function () {
+        Route::get('/logout', 'logout')->name('logout');
+    });
 });
 
-//Route::middleware('auth')->get('/dashboard', function () {
-//    return view('dashboard');
-//})->name('dashboard');
+Route::middleware('auth')->get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
 
 Route::get('/token', function () {
     return csrf_token();
