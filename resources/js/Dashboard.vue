@@ -6,9 +6,12 @@
             <p @click="logout" class="py-4 px-6 text-lg text-red-600  font-bold hover:underline    outline-0">Log out</p>
         </div>
     </div>
+    <product> </product>
+
 </template>
 <script setup>
 import {ref} from "vue";
+import Product from "./components/products/Product.vue";
 import axios from "axios";
 import router from "./router/index.js";
 const logout = async () => {
