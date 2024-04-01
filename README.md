@@ -25,12 +25,6 @@ Install the dependencies:
 npm install
 ```
 
-Compile the assets:
-
-```sh
-npm run dev
-```
-
 Create a copy of the `.env` file:
 
 ```sh
@@ -43,10 +37,22 @@ Generate the application key:
 php artisan key:generate
 ```
 
+Generate JWT token:
+
+```sh
+php artisan jwt:secret
+```
+
 Run the database migrations:
 
 ```sh
 php artisan migrate
+```
+
+Compile the assets:
+
+```sh
+npm run dev
 ```
 
 Start the development server:
